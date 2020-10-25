@@ -80,7 +80,7 @@ seekbar.addEventListener('mousemove', (e) => {
     }
 });
 
-window.addEventListener('mouseup', (e) => {
+seekbar.addEventListener('mouseup', (e) => {
     dragging = false;
 })
 
