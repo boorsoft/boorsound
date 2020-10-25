@@ -6,6 +6,11 @@ body {
     padding: 0;
     font-family: "Roboto", sans-serif;
     overflow: hidden;
+    color: #f2f2f2;
+}
+
+.bold {
+    font-weight: bold;
 }
 
 .header {
@@ -17,9 +22,7 @@ body {
 }
 
 .app-title {
-    color: #f1f1f1;
     font-size: 16px;
-    font-weight: bold;
     padding-left: 15px;
     line-height: 40px;
     letter-spacing: 1px;
@@ -27,20 +30,18 @@ body {
 
 .app-quit-button {
     height: 40px;
-    width: 40px;
-    font-weight: bold;
+    width: 50px;
     transition: cubic-bezier(0.165, 0.84, 0.44, 1);
     -webkit-app-region: no-drag;
 }
 
 .app-quit-button i {
     font-size: 22px;
-    color: #f1f1f1;
-    margin: 10px;
+    padding: 7px 15px;
 }
 
 .app-quit-button:hover {
-    background-color: #353a3d;
+    background-color: #e72d36;
 }
 
 .container {
@@ -49,10 +50,24 @@ body {
     display: flex;
     flex-direction: column;
     align-content: center;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .cover-container {
-    width: 320px;
-    height: 360px;
+    width: 280px;
+    height: 300px;
+    border-radius: 15px;
+    background-color: #2f3338;
 }
+
+.track-info {
+    width: 280px;
+    height: 50px;
+    padding: 10px;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 0.8px;
+}
+
+
