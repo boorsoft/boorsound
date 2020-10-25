@@ -17,6 +17,10 @@ const prevButton = document.querySelector('#prevButton')
 const playOrPauseButton = document.querySelector('#playOrPauseButton')
 const nextButton = document.querySelector('#nextButton')
 
+const fillbar = document.querySelector('.fillbar')
+const seekbar = document.querySelector('.seekbar')
+var dragging = false;
+
 // create stream to read an mp3 file
 var stream = fs.createReadStream(path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')) 
 // get mp3 data, such as track title, artist, cover image etc.
@@ -50,6 +54,35 @@ function playOrPause() {
 }
 
 playOrPauseButton.addEventListener('click', playOrPause)
+
+// Update fillbar 
+audio.addEventListener('timeupdate', () => {
+    var position = audio.currentTime / audio.duration;
+
+    fillbar.style.width = position * 100 + '%'
+
+    if (audio.ended) {
+        playOrPauseButton.firstChild.className = 'fa fa-play'
+        audio.pause()
+    }
+})
+
+seekbar.addEventListener('mousedown', (e) => {
+    var clickPos = e.clientX - seekbar.style.width
+    audio.currentTime = (clickPos / seekbar.offsetWidth) * audio.duration
+    dragging = true;
+}, false)
+
+seekbar.addEventListener('mousemove', (e) => {
+    if (dragging) {
+        var clickPos = e.clientX - seekbar.style.width;
+        audio.currentTime = (clickPos / seekbar.offsetWidth) * audio.duration;
+    }
+});
+
+window.addEventListener('mouseup', (e) => {
+    dragging = false;
+})
 
 var win = remote.getCurrentWindow();
 
