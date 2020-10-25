@@ -7,7 +7,8 @@ const mm = require('musicmetadata')
 const audio = new Audio();
 audio.src = path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')
 
-const quitButton = document.querySelector('.app-quit-button')
+const quitButton = document.querySelector('#quitButton')
+const minimizeButton = document.querySelector('#minimizeButton')
 const coverContainer = document.querySelector('.cover-container')
 const trackTitle = document.querySelector('#trackTitle')
 const artist = document.querySelector('#artist')
@@ -50,8 +51,13 @@ function playOrPause() {
 
 playOrPauseButton.addEventListener('click', playOrPause)
 
+var win = remote.getCurrentWindow();
+
+minimizeButton.addEventListener('click', () => {
+    win.minimize()
+})
+
 // Close app on click
 quitButton.addEventListener('click', () => {
-    var window = remote.getCurrentWindow();
-    window.close();
+    win.close();
 })
