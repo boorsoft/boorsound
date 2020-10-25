@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&family=Trispace&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Syne+Tactile&display=swap');
 
 body {
     background-color: #25292c;
@@ -19,13 +20,16 @@ body {
     -webkit-app-region: drag;
     display: flex;
     justify-content: space-between;
+    background-color: #141416;
 }
 
 .app-title {
+    font-family: 'Pacifico', cursive;
     font-size: 16px;
     padding-left: 15px;
     line-height: 40px;
     letter-spacing: 1px;
+    margin: 0 auto;
 }
 
 .app-quit-button {
@@ -46,7 +50,7 @@ body {
 
 .container {
     width: 100%;
-    height: 92vh;
+    height: 94vh;
     display: flex;
     flex-direction: column;
     align-content: center;
@@ -55,11 +59,11 @@ body {
 }
 
 .cover-container {
-    width: 280px;
-    height: 300px;
+    width: 270px;
+    height: 275px;
     border-radius: 15px;
     background-color: #2f3338;
-    background-size: 280px 300px;
+    background-size: 270px 275px;
 }
 
 .track-info {
@@ -71,4 +75,42 @@ body {
     letter-spacing: 0.8px;
 }
 
+.player {
+    width: 100%;
+    height: 85px;
+    background-color: #141416;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
+.seekbar {
+    width: 100%;
+    height: 5px;
+    background-color: #aaaaaa;
+}
+
+.player-buttons {
+    width: 220px;
+    height: 85px;
+    background-color: #141416;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-button {
+    width: 50px;
+    height: 50px;
+    margin: 7px;
+}
+
+.player-button i {
+    font-size: 25px;
+    padding: 12px;
+    transition: 0.13s ease-in-out;
+}
+
+.player-button i:hover {
+    color: #aaaaaa;
+}

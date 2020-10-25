@@ -4,10 +4,17 @@ const fs = require('fs')
 const path = require('path')
 const mm = require('musicmetadata')
 
+const audio = new Audio();
+audio.src = path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')
+
 const quitButton = document.querySelector('.app-quit-button')
 const coverContainer = document.querySelector('.cover-container')
 const trackTitle = document.querySelector('#trackTitle')
 const artist = document.querySelector('#artist')
+
+const prevButton = document.querySelector('#prevButton')
+const playOrPauseButton = document.querySelector('#playOrPauseButton')
+const nextButton = document.querySelector('#nextButton')
 
 // create stream to read an mp3 file
 var stream = fs.createReadStream(path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')) 
@@ -29,6 +36,19 @@ mm(stream, (err, data) => {
     trackTitle.innerHTML = data['title']
     coverContainer.style.backgroundImage = `url(${coverUrl})`
 })
+
+// Audio controls
+function playOrPause() {
+    if (audio.paused) {
+        playOrPauseButton.firstChild.className = 'fa fa-pause'
+        audio.play();
+    } else {
+        playOrPauseButton.firstChild.className = 'fa fa-play';
+        audio.pause();
+    }
+}
+
+playOrPauseButton.addEventListener('click', playOrPause)
 
 // Close app on click
 quitButton.addEventListener('click', () => {
