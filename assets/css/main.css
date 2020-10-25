@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Trispace&display=swap');
+
+body {
+    background-color: #25292c;
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+    overflow: hidden;
+}
+
+.header {
+    width: 100%;
+    height: 40px;
+    -webkit-app-region: drag;
+    display: flex;
+    justify-content: space-between;
+}
+
+.app-title {
+    color: #f1f1f1;
+    font-size: 16px;
+    font-weight: bold;
+    padding-left: 15px;
+    line-height: 40px;
+    letter-spacing: 1px;
+}
+
+.app-quit-button {
+    height: 40px;
+    width: 40px;
+    font-weight: bold;
+    transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+    -webkit-app-region: no-drag;
+}
+
+.app-quit-button i {
+    font-size: 22px;
+    color: #f1f1f1;
+    margin: 10px;
+}
+
+.app-quit-button:hover {
+    background-color: #353a3d;
+}
+
+.container {
+    width: 100%;
+    height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+
+.cover-container {
+    width: 320px;
+    height: 360px;
+}

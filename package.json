@@ -1,0 +1,17 @@
+{
+  "name": "boorsound",
+  "version": "1.0.0",
+  "description": "An audio player for desktop",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "boorsoft",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^10.1.5"
+  },
+  "dependencies": {
+    "electron-reload": "^1.5.0"
+  }
+}
