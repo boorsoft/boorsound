@@ -5,6 +5,7 @@ reload(__dirname);
 
 function createWindow () {
   const win = new BrowserWindow({
+    icon: 'assets/icons/icon.png',
     width: 370,
     height: 500,
     frame: false,
@@ -12,7 +13,8 @@ function createWindow () {
     minimizable: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      sandbox: false
     }
   })
 

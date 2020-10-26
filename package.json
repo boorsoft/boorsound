@@ -6,15 +6,15 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=/assets/icons/Boorsound-Logo.iscn --prune=true --out=release-builds",
-    "package-win": "electron-packager . Boorsound --overwrite --asar=true --platform=win32 --arch=x64 --icon=/assets/icons/Boorsound-Logo.ico --prune=true --out=release-builds --version-string.CompanyName=Boorsoft --version-string.FileDescription=CE --version-string.ProductName=\"Boorsound\"",    
-    "package-linux": "electron-packager . Boorsound --overwrite --asar=true --platform=linux --arch=x64 --icon=/assets/icons/Boorsound-Logo.png --prune=true --out=release-builds"
+    "package-win": "electron-packager . Boorsound --overwrite --asar=true --platform=win32 --arch=x64 --icon=./assets/icons/icon.ico --prune=true --out=build --version-string.CompanyName=Boorsoft --version-string.FileDescription=An audio player --version-string.ProductName=\"Boorsound\"",
+    "package-linux": "electron-packager . Boorsound --overwrite --asar=true --platform=linux --arch=x64 --icon=./assets/icons/icon.png --prune=true --out=build"
   },
   "author": "boorsoft",
   "license": "ISC",
   "devDependencies": {
     "electron": "^10.1.5",
-    "electron-packager": "^15.1.0"
+    "electron-packager": "^15.1.0",
+    "electron-winstaller": "^4.0.1"
   },
   "dependencies": {
     "electron-reload": "^1.5.0",

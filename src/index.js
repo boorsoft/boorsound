@@ -1,7 +1,6 @@
 const electron = require('electron')
 const remote = electron.remote
 const fs = require('fs')
-const path = require('path')
 const mm = require('musicmetadata')
 
 const quitButton = document.querySelector('#quitButton')
@@ -9,6 +8,7 @@ const minimizeButton = document.querySelector('#minimizeButton')
 const coverContainer = document.querySelector('.cover-container')
 const trackTitle = document.querySelector('#trackTitle')
 const artist = document.querySelector('#artist')
+const bg = document.querySelector('.bg')
 
 const trackCurrentTime = document.querySelector('#trackCurrentTime')
 const trackDuration = document.querySelector('#trackDuration')
@@ -24,30 +24,38 @@ var dragging = false;
 var repeat = false;
 
 const audio = new Audio();
-audio.src = process.argv[1]
 
-console.log(process.argv[1])
+var file = remote.process.argv[1]
+audio.src = file
+audio.autoplay = true;
 
-// create stream to read an mp3 file
-var stream = fs.createReadStream(process.argv[1])
-// get mp3 data, such as track title, artist, cover image etc.
-mm(stream, (err, data) => {
-    if (err) throw err;
-    stream.close()
-    console.log(data)
-    console.log(data['picture'])
+if (file != '.') {
+    // create stream to read an mp3 file
+    var stream = fs.createReadStream(file)
+    // get mp3 data, such as track title, artist, cover image etc.
+    mm(stream, (err, data) => {
+        if (err) throw err;
+        stream.close()
+        console.log(data)
+        console.log(data['picture'])
 
-    // get the cover image buffer data
-    var coverBuffer = data['picture'][0].data
-    var blob = new Blob([coverBuffer], {type: "image/jpeg"}) // Make it BLOB
-    var urlCreator = window.URL || window.webkitURL; // initialize an url creator
-    var coverUrl = urlCreator.createObjectURL( blob ); // create an url to a BLOB object
+        // get the cover image buffer data if exists
+        if (data['picture'].length != 0) {
+            var coverBuffer = data['picture'][0].data
+            var blob = new Blob([coverBuffer], {type: "image/jpeg"}) // Make it BLOB
+            var urlCreator = window.URL || window.webkitURL; // initialize an url creator
+            var coverUrl = urlCreator.createObjectURL( blob ); // create an url to a BLOB object
+            coverContainer.style.backgroundImage = `url(${coverUrl})`
+            bg.style.backgroundImage = `url(${coverUrl})`
+        } else {
+            coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
+        }
 
-    // set the HTML elements' values to the values we read from an mp3 file
-    artist.innerHTML = data['artist']
-    trackTitle.innerHTML = data['title']
-    coverContainer.style.backgroundImage = `url(${coverUrl})`
-})
+        // set the HTML elements' values to the values we read from an mp3 file
+        artist.innerHTML = data['artist']
+        trackTitle.innerHTML = data['title']
+    })
+}
 
 // Audio controls
 function playOrPause() {
