@@ -16,10 +16,12 @@ const artist = document.querySelector('#artist')
 const prevButton = document.querySelector('#prevButton')
 const playOrPauseButton = document.querySelector('#playOrPauseButton')
 const nextButton = document.querySelector('#nextButton')
+const repeatButton = document.querySelector('#repeatButton')
 
 const fillbar = document.querySelector('.fillbar')
 const seekbar = document.querySelector('.seekbar')
 var dragging = false;
+var repeat = false;
 
 // create stream to read an mp3 file
 var stream = fs.createReadStream(path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')) 
@@ -53,7 +55,18 @@ function playOrPause() {
     }
 }
 
+function repeatAudio() {
+    if (repeat) {
+        repeatButton.style.backgroundColor = ''
+        repeat = false;
+    } else {
+        repeatButton.style.backgroundColor = '#262929' 
+        repeat = true;
+    }
+}
+
 playOrPauseButton.addEventListener('click', playOrPause)
+repeatButton.addEventListener('click', repeatAudio)
 
 // Update fillbar 
 audio.addEventListener('timeupdate', () => {
@@ -62,9 +75,13 @@ audio.addEventListener('timeupdate', () => {
     fillbar.style.width = position * 100 + '%'
 
     if (audio.ended) {
-        playOrPauseButton.firstChild.className = 'fa fa-play'
-        audio.pause()
-    }
+        if (!repeat) {
+            playOrPauseButton.firstChild.className = 'fa fa-play'
+            audio.pause()
+        } else {
+            audio.play()
+        }
+    } 
 })
 
 seekbar.addEventListener('mousedown', (e) => {
