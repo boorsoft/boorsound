@@ -2,6 +2,7 @@ const electron = require('electron')
 const remote = electron.remote
 const fs = require('fs')
 const mm = require('musicmetadata')
+const Store = require('./store')
 
 const quitButton = document.querySelector('#quitButton')
 const minimizeButton = document.querySelector('#minimizeButton')
@@ -21,9 +22,13 @@ const repeatButton = document.querySelector('#repeatButton')
 const fillbar = document.querySelector('.fillbar')
 const seekbar = document.querySelector('.seekbar')
 var dragging = false;
-var repeat = false;
 
 const audio = new Audio();
+
+const store = new Store()
+
+var repeat = store.get('repeat') // read from file
+console.log(repeat)
 
 var file = remote.process.argv[1]
 audio.src = file
@@ -36,8 +41,6 @@ if (file != '.') {
     mm(stream, (err, data) => {
         if (err) throw err;
         stream.close()
-        console.log(data)
-        console.log(data['picture'])
 
         // get the cover image buffer data if exists
         if (data['picture'].length != 0) {
@@ -76,6 +79,9 @@ function repeatAudio() {
         repeatButton.style.backgroundColor = '#262929' 
         repeat = true;
     }
+
+    store.set('repeat', repeat.toString()) // Save value to the store
+    console.log(`setting ${repeat}`)
 }
 
 // Convert time to 2 digit format
@@ -99,7 +105,7 @@ function duration(seconds) {
     trackDuration.textContent = min + ":" + sec;
 }
 
-// Evenet listeners
+// Event listeners
 playOrPauseButton.addEventListener('click', playOrPause)
 repeatButton.addEventListener('click', repeatAudio)
 
