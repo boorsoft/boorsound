@@ -126,14 +126,14 @@ seekbar.addEventListener('mousedown', (e) => {
     dragging = true;
 }, false)
 
-seekbar.addEventListener('mousemove', (e) => {
+document.addEventListener('mousemove', (e) => {
     if (dragging) {
         var clickPos = e.clientX - seekbar.style.width;
         audio.currentTime = (clickPos / seekbar.offsetWidth) * audio.duration;
     }
 });
 
-seekbar.addEventListener('mouseup', (e) => {
+document.addEventListener('mouseup', (e) => {
     dragging = false;
 })
 
