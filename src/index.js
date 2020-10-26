@@ -4,14 +4,14 @@ const fs = require('fs')
 const path = require('path')
 const mm = require('musicmetadata')
 
-const audio = new Audio();
-audio.src = path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')
-
 const quitButton = document.querySelector('#quitButton')
 const minimizeButton = document.querySelector('#minimizeButton')
 const coverContainer = document.querySelector('.cover-container')
 const trackTitle = document.querySelector('#trackTitle')
 const artist = document.querySelector('#artist')
+
+const trackCurrentTime = document.querySelector('#trackCurrentTime')
+const trackDuration = document.querySelector('#trackDuration')
 
 const prevButton = document.querySelector('#prevButton')
 const playOrPauseButton = document.querySelector('#playOrPauseButton')
@@ -23,8 +23,13 @@ const seekbar = document.querySelector('.seekbar')
 var dragging = false;
 var repeat = false;
 
+const audio = new Audio();
+audio.src = process.argv[1]
+
+console.log(process.argv[1])
+
 // create stream to read an mp3 file
-var stream = fs.createReadStream(path.join(__dirname, '../assets/L’Indécis-Playtime.mp3')) 
+var stream = fs.createReadStream(process.argv[1])
 // get mp3 data, such as track title, artist, cover image etc.
 mm(stream, (err, data) => {
     if (err) throw err;
@@ -65,12 +70,35 @@ function repeatAudio() {
     }
 }
 
+// Convert time to 2 digit format
+function convertTime(seconds) {
+    var min = Math.floor(seconds / 60);
+    var sec = seconds % 60;
+
+    min = (min < 10) ? "0" + min : min;
+    sec = (sec < 10) ? "0" + sec : sec;
+    trackCurrentTime.textContent = min + ":" + sec;
+    duration(Math.round(audio.duration));
+}
+
+// Create 2 digit format instead of 1
+function duration(seconds) {
+    var min = Math.floor(seconds / 60);
+    var sec = seconds % 60;
+
+    min = (min < 10) ? "0" + min : min;
+    sec = (sec < 10) ? "0" + sec : sec;
+    trackDuration.textContent = min + ":" + sec;
+}
+
+// Evenet listeners
 playOrPauseButton.addEventListener('click', playOrPause)
 repeatButton.addEventListener('click', repeatAudio)
 
 // Update fillbar 
 audio.addEventListener('timeupdate', () => {
     var position = audio.currentTime / audio.duration;
+    convertTime(Math.round(audio.currentTime))
 
     fillbar.style.width = position * 100 + '%'
 

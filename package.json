@@ -1,15 +1,20 @@
 {
   "name": "boorsound",
+  "productName": "Boorsound",
   "version": "1.0.0",
   "description": "An audio player for desktop",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=/assets/icons/Boorsound-Logo.iscn --prune=true --out=release-builds",
+    "package-win": "electron-packager . Boorsound --overwrite --asar=true --platform=win32 --arch=x64 --icon=/assets/icons/Boorsound-Logo.ico --prune=true --out=release-builds --version-string.CompanyName=Boorsoft --version-string.FileDescription=CE --version-string.ProductName=\"Boorsound\"",    
+    "package-linux": "electron-packager . Boorsound --overwrite --asar=true --platform=linux --arch=x64 --icon=/assets/icons/Boorsound-Logo.png --prune=true --out=release-builds"
   },
   "author": "boorsoft",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^10.1.5"
+    "electron": "^10.1.5",
+    "electron-packager": "^15.1.0"
   },
   "dependencies": {
     "electron-reload": "^1.5.0",
