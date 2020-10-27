@@ -6,12 +6,13 @@ class Store {
     constructor() {
         const userDataPath = (electron.app || electron.remote.app).getPath('userData')
         this.path = path.join(userDataPath, 'userdata.json')
-        this.data = readData(this.path, {'repeat': "false"})
+        this.data = readData(this.path, {repeat: false})
         console.log(this.data)
     }
 
     // get data by key
     get(key) {
+        console.log('Get by key: ', this.data[key])
         return this.data[key]
     }
 
@@ -26,7 +27,9 @@ class Store {
 // Read parsed data from a file
 function readData(filePath, defaultData) {
     try {
-        return JSON.parse(fs.readFileSync(filePath))
+        var parsedFile = JSON.parse(fs.readFileSync(filePath))
+        console.log('parsedFile: ', parsedFile)
+        return parsedFile;
     } catch(err) {
         return defaultData;
     } 

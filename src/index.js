@@ -27,8 +27,10 @@ const audio = new Audio();
 
 const store = new Store()
 
-var repeat = store.get('repeat') // read from file
-console.log(repeat)
+repeat = Boolean(store.get('repeat')) // read from file
+
+if (repeat) repeatButton.style.backgroundColor = '#262929'
+else repeatButton.style.backgroundColor = ''
 
 var file = remote.process.argv[1]
 audio.src = file
@@ -80,8 +82,8 @@ function repeatAudio() {
         repeat = true;
     }
 
-    store.set('repeat', repeat.toString()) // Save value to the store
-    console.log(`setting ${repeat}`)
+    store.set('repeat', repeat) // Save value to the store
+
 }
 
 // Convert time to 2 digit format
@@ -117,11 +119,11 @@ audio.addEventListener('timeupdate', () => {
     fillbar.style.width = position * 100 + '%'
 
     if (audio.ended) {
-        if (!repeat) {
+        if (repeat) {
+            audio.play()
+        } else {
             playOrPauseButton.firstChild.className = 'fa fa-play'
             audio.pause()
-        } else {
-            audio.play()
         }
     } 
 })
@@ -139,7 +141,7 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-document.addEventListener('mouseup', (e) => {
+document.addEventListener('mouseup', () => {
     dragging = false;
 })
 
