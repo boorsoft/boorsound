@@ -18,6 +18,7 @@ const prevButton = document.querySelector('#prevButton')
 const playOrPauseButton = document.querySelector('#playOrPauseButton')
 const nextButton = document.querySelector('#nextButton')
 const repeatButton = document.querySelector('#repeatButton')
+const repeatButtonColor = 'rgba(38, 41, 41, 0.45)'
 
 const fillbar = document.querySelector('.fillbar')
 const seekbar = document.querySelector('.seekbar')
@@ -27,39 +28,43 @@ const audio = new Audio();
 
 const store = new Store()
 
-repeat = Boolean(store.get('repeat')) // read from file
+init();
 
-if (repeat) repeatButton.style.backgroundColor = '#262929'
-else repeatButton.style.backgroundColor = ''
+function init() {
+    repeat = Boolean(store.get('repeat')) // read from file
 
-var file = remote.process.argv[1]
-audio.src = file
-audio.autoplay = true;
+    if (repeat) repeatButton.style.backgroundColor = repeatButtonColor;
+    else repeatButton.style.backgroundColor = ''
 
-if (file != '.') {
-    // create stream to read an mp3 file
-    var stream = fs.createReadStream(file)
-    // get mp3 data, such as track title, artist, cover image etc.
-    mm(stream, (err, data) => {
-        if (err) throw err;
-        stream.close()
+    var file = remote.process.argv[1]
+    audio.src = file
+    audio.autoplay = true;
 
-        // get the cover image buffer data if exists
-        if (data['picture'].length != 0) {
-            var coverBuffer = data['picture'][0].data
-            var blob = new Blob([coverBuffer], {type: "image/jpeg"}) // Make it BLOB
-            var urlCreator = window.URL || window.webkitURL; // initialize an url creator
-            var coverUrl = urlCreator.createObjectURL( blob ); // create an url to a BLOB object
-            coverContainer.style.backgroundImage = `url(${coverUrl})`
-            bg.style.backgroundImage = `url(${coverUrl})`
-        } else {
-            coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
-        }
+    if (file != '.') {
+        // create stream to read an mp3 file
+        var stream = fs.createReadStream(file)
+        // get mp3 data, such as track title, artist, cover image etc.
+        mm(stream, (err, data) => {
+            if (err) throw err;
+            stream.close()
 
-        // set the HTML elements' values to the values we read from an mp3 file
-        artist.innerHTML = data['artist']
-        trackTitle.innerHTML = data['title']
-    })
+            // get the cover image buffer data if exists
+            if (data['picture'].length != 0) {
+                var coverBuffer = data['picture'][0].data
+                var blob = new Blob([coverBuffer], {type: "image/jpeg"}) // Make it BLOB
+                var urlCreator = window.URL || window.webkitURL; // initialize an url creator
+                var coverUrl = urlCreator.createObjectURL( blob ); // create an url to a BLOB object
+                coverContainer.style.backgroundImage = `url(${coverUrl})`
+                bg.style.backgroundImage = `url(${coverUrl})`
+            } else {
+                coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
+            }
+
+            // set the HTML elements' values to the values we read from an mp3 file
+            artist.innerHTML = data['artist']
+            trackTitle.innerHTML = data['title']
+        })
+    }
 }
 
 // Audio controls
@@ -78,7 +83,7 @@ function repeatAudio() {
         repeatButton.style.backgroundColor = ''
         repeat = false;
     } else {
-        repeatButton.style.backgroundColor = '#262929' 
+        repeatButton.style.backgroundColor = repeatButtonColor
         repeat = true;
     }
 

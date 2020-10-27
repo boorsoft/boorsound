@@ -3,37 +3,50 @@ const reload = require('electron-reload')
 
 reload(__dirname);
 
+let win = null;
+
 function createWindow () {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     icon: 'assets/icons/icon.png',
     width: 370,
     height: 500,
     frame: false,
+    autoHideMenuBar: true,
     resizable: false,
     minimizable: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
-      sandbox: false
+      enableRemoteModule: true
     }
   })
 
-  // get rid of the menu on the top
-  win.removeMenu()
   win.loadFile('src/index.html')
   // win.webContents.openDevTools()
 }
 
-app.whenReady().then(createWindow)
+const gotLock = app.requestSingleInstanceLock()
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+if (!gotLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (win) {
+      if (win.minimized) win.restore()
+      win.focus()
+    }
+  })
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
+  app.on('ready', createWindow)
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
+  
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+}
