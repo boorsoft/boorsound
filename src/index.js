@@ -116,6 +116,10 @@ function duration(seconds) {
 playOrPauseButton.addEventListener('click', playOrPause)
 repeatButton.addEventListener('click', repeatAudio)
 
+document.addEventListener('keydown', (e) => {
+    if (e.key === ' ') playOrPause()
+})
+
 // Update fillbar 
 audio.addEventListener('timeupdate', () => {
     var position = audio.currentTime / audio.duration;

@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const reload = require('electron-reload')
+const fs = require('fs')
 
 reload(__dirname);
 
@@ -21,7 +22,7 @@ function createWindow () {
   })
 
   win.loadFile('src/index.html')
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 }
 
 const gotLock = app.requestSingleInstanceLock()
