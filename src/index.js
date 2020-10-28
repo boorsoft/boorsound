@@ -1,4 +1,5 @@
 const electron = require('electron')
+const ipcRenderer = electron.ipcRenderer
 const remote = electron.remote
 const fs = require('fs')
 const mm = require('musicmetadata')
@@ -30,13 +31,15 @@ const store = new Store()
 
 init();
 
-function init() {
+function init(track = remote.process.argv[1]) {
     repeat = Boolean(store.get('repeat')) // read from file
 
+    // Change repeat button styling
     if (repeat) repeatButton.style.backgroundColor = repeatButtonColor;
     else repeatButton.style.backgroundColor = ''
-
-    var file = remote.process.argv[1]
+    
+    // set the audio file
+    var file = track
     audio.src = file
     audio.autoplay = true;
 
@@ -155,6 +158,11 @@ document.addEventListener('mouseup', () => {
 })
 
 var win = remote.getCurrentWindow();
+
+ipcRenderer.on('second-instance', (e, file) => {
+    console.log('File', file)
+    init(file) // Swipe files if second instance of app is opened
+})
 
 minimizeButton.addEventListener('click', () => {
     win.minimize()

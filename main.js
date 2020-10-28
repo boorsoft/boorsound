@@ -1,6 +1,8 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, remote } = require('electron');
 const reload = require('electron-reload')
-const fs = require('fs')
+const MemoryFileSystem = require("memory-fs");
+const mfs = new MemoryFileSystem();
+mfs.mkdirpSync("/audio");
 
 reload(__dirname);
 
@@ -25,29 +27,31 @@ function createWindow () {
   win.webContents.openDevTools()
 }
 
+// prevent second instances of app
 const gotLock = app.requestSingleInstanceLock()
 
 if (!gotLock) {
   app.quit()
-} else {
-  app.on('second-instance', () => {
-    if (win) {
-      if (win.minimized) win.restore()
-      win.focus()
-    }
-  })
+} 
 
-  app.on('ready', createWindow)
+app.on('second-instance', (e, argv) => {
+  if (win) {
+    if (win.minimized) win.restore()
+    win.focus()
+    win.webContents.send('second-instance', argv[2]) // send command line argument of second intance to the renderer process
+  }
+})
 
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
-  })
-  
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
-}
+app.on('ready', createWindow)
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow()
+  }
+})
