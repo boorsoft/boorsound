@@ -24,7 +24,7 @@ function createWindow () {
   })
 
   win.loadFile('src/index.html')
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 }
 
 // prevent second instances of app

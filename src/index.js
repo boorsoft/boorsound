@@ -1,3 +1,4 @@
+const { lookupService } = require('dns')
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const remote = electron.remote
@@ -23,7 +24,13 @@ const repeatButtonColor = 'rgba(38, 41, 41, 0.45)'
 
 const fillbar = document.querySelector('.fillbar')
 const seekbar = document.querySelector('.seekbar')
+const volumeButton = document.querySelector('#volumeButton')
+const volumeContainer = document.querySelector('.volume-container')
+const volumeFillbar = document.querySelector('.volume-fillbar')
+const volumeControl = document.querySelector('.volume-control')
+
 var dragging = false;
+var volumeOpen = false;
 
 const audio = new Audio();
 
@@ -42,6 +49,7 @@ function init(track = remote.process.argv[1]) {
     var file = track
     audio.src = file
     audio.autoplay = true;
+    playOrPauseButton.firstChild.className = 'fa fa-pause'
 
     if (file != '.') {
         // create stream to read an mp3 file
@@ -60,6 +68,7 @@ function init(track = remote.process.argv[1]) {
                 coverContainer.style.backgroundImage = `url(${coverUrl})`
                 bg.style.backgroundImage = `url(${coverUrl})`
             } else {
+                bg.style.backgroundColor = '#25292c'
                 coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
             }
 
@@ -140,21 +149,39 @@ audio.addEventListener('timeupdate', () => {
     } 
 })
 
+// Change position of seekbar && current time of audio
 seekbar.addEventListener('mousedown', (e) => {
-    var clickPos = e.clientX - seekbar.style.width
+    let clickPos = e.clientX - seekbar.style.width
     audio.currentTime = (clickPos / seekbar.offsetWidth) * audio.duration
     dragging = true;
 }, false)
 
 document.addEventListener('mousemove', (e) => {
     if (dragging) {
-        var clickPos = e.clientX - seekbar.style.width;
+        let clickPos = e.clientX - seekbar.style.width
         audio.currentTime = (clickPos / seekbar.offsetWidth) * audio.duration;
     }
 });
 
 document.addEventListener('mouseup', () => {
     dragging = false;
+})
+
+// Open volume container on click
+volumeButton.addEventListener('click', () => {
+    if (!volumeOpen) {
+        volumeContainer.style.display = 'block'
+        volumeOpen = true;
+    } else {
+        volumeContainer.style.display = 'none'
+        volumeOpen = false;
+    }
+})
+
+volumeControl.addEventListener('mousedown', (e) => {
+    console.log('mousedown')
+    console.log(clickPos)
+    console.log(audio.volume)
 })
 
 var win = remote.getCurrentWindow();
