@@ -1,4 +1,3 @@
-const { lookupService } = require('dns')
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const remote = electron.remote
