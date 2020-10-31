@@ -9,6 +9,7 @@
 }
 
 :root {
+    --primary-color: #1e2121;
     --text-color: #ffeee2;
 }
 
@@ -23,6 +24,10 @@ body {
     font-family: "Roboto", sans-serif;
     overflow: hidden;
     color: var(--text-color);
+}
+
+h1 {
+    font-size: 16px;
 }
 
 .bg {
@@ -93,6 +98,7 @@ body {
     align-items: center;
     justify-content: space-evenly;
     user-select: none;
+    position: relative;
 }
 
 .cover-container {
@@ -117,6 +123,8 @@ body {
     text-align: center;
     letter-spacing: 0.8px;
     line-height: 25px;
+    max-lines: 1;
+    text-overflow: ellipsis;
 }
 
 #artist, #trackTitle {
@@ -128,7 +136,7 @@ body {
 }
 
 #trackTitle {
-    font-size: 24px;
+    font-size: 18px;
     letter-spacing: 1px;
 }
 
@@ -138,7 +146,7 @@ body {
     position: absolute;
     bottom: 1;
     z-index: -1;
-    background-color: #1e2121;
+    background-color: var(--primary-color);
     filter: opacity(65%);
 }
 
@@ -162,7 +170,7 @@ body {
 .fillbar {
     width: 0;
     height: 8px;
-    background-color: #1e2121;
+    background-color: var(--primary-color);
     filter: opacity(70%);
 }
 
@@ -239,4 +247,82 @@ body {
     width: 12px;
     height: 12px;
     cursor: pointer;
+}
+
+.playlist-container {
+    width: 100%;
+    height: 77vh;
+    position: absolute;
+    z-index: 10;
+    background-color: var(--primary-color);
+    top: 40px;
+    display: none;
+}
+
+.playlist-header {
+    width: 100%;
+    height: 35px;
+    background-color: #25292c;
+    padding: 5px;
+    text-align: center;
+}
+
+.track-container {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.track-container:hover {
+    background-color: #2f3338;
+}
+
+.title-info {
+    height: 100%;
+    width: 70%;
+    padding: 10px;
+    line-height: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    font-size: 17px;
+}
+
+.artist {
+    font-size: 12px;
+}
+
+.duration-info-playlist {
+    height: 100%;
+    width: 30%;
+    padding: 20px 40px;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hide-playlist-button {
+    height: 70vh;
+    width: 15px;
+    padding: 15px;
+    position: absolute;
+    right: 0;
+    font-size: 25px;
+    z-index: 11;
+}
+
+.hide-playlist-button i {
+    margin-top: 160px;
+}
+
+.hide-playlist-button:hover {
+    background: linear-gradient(to right, transparent, #25292c);
 }
