@@ -5,10 +5,6 @@
 
 ----------------------------------------------------------------------------------------------
 
-Boorsound a simple audio player written with **Electron** using just HTML, CSS and JavaScript.
+Boorsound a simple audio player written with **Electron** using just **HTML, CSS** and **JavaScript**.
 
 *   Use **npm install** then **npm start** to start the app.
-
-![Boorsound logo](/assets/icons/icon.png)
-
-<boorsoft@gmail.com>
