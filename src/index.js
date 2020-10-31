@@ -26,8 +26,7 @@ const fillbar = document.querySelector('.fillbar')
 const seekbar = document.querySelector('.seekbar')
 const volumeButton = document.querySelector('#volumeButton')
 const volumeContainer = document.querySelector('.volume-container')
-const volumeFillbar = document.querySelector('.volume-fillbar')
-const volumeControl = document.querySelector('.volume-control')
+const volumeSlider = document.querySelector('.volume-slider')
 
 var dragging = false;
 var volumeOpen = false;
@@ -178,11 +177,9 @@ volumeButton.addEventListener('click', () => {
     }
 })
 
-volumeControl.addEventListener('mousedown', (e) => {
-    console.log('mousedown')
-    console.log(clickPos)
-    console.log(audio.volume)
-})
+volumeSlider.oninput = () => {
+    audio.volume = volumeSlider.value;
+}
 
 var win = remote.getCurrentWindow();
 

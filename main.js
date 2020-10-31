@@ -12,7 +12,7 @@ function createWindow () {
   win = new BrowserWindow({
     icon: 'assets/icons/icon.png',
     width: 370,
-    height: 500,
+    height: 530,
     frame: false,
     autoHideMenuBar: true,
     resizable: false,
