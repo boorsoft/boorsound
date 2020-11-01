@@ -51,6 +51,8 @@ h1 {
     -webkit-app-region: drag;
     display: flex;
     justify-content: space-between;
+    background: rgba(37, 41, 44, 0);
+    transition: 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
 .app-title {
@@ -112,7 +114,7 @@ h1 {
 }
 
 .cover-container:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .track-info {
@@ -120,15 +122,17 @@ h1 {
     height: 50px;
     padding: 5px;
     font-size: 15px;
+}
+
+#artist, #trackTitle {
+    text-shadow: 2px 3px 5px rgba(20, 20, 20, 0.3);
     text-align: center;
     letter-spacing: 0.8px;
     line-height: 25px;
     max-lines: 1;
     text-overflow: ellipsis;
-}
-
-#artist, #trackTitle {
-    text-shadow: 2px 3px 5px rgba(20, 20, 20, 0.3);
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 #artist {
@@ -250,13 +254,15 @@ h1 {
 }
 
 .playlist-container {
-    width: 100%;
+    width: 0;
     height: 77vh;
     position: absolute;
+    opacity: 0;
+    pointer-events: none;
     z-index: 10;
     background-color: var(--primary-color);
     top: 40px;
-    display: none;
+    transition: 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
 .playlist-header {
@@ -309,7 +315,7 @@ h1 {
     justify-content: center;
 }
 
-.hide-playlist-button {
+.playlist-button {
     height: 70vh;
     width: 15px;
     padding: 15px;
@@ -317,12 +323,25 @@ h1 {
     right: 0;
     font-size: 25px;
     z-index: 11;
+    opacity: 0.8;
 }
 
-.hide-playlist-button i {
+.open-playlist {
+    left: 0;
+    top: 0;
+    height: 77vh;
+    margin-bottom: 80px;
+    padding: 50px 15px;
+}
+
+.playlist-button i {
     margin-top: 160px;
 }
 
-.hide-playlist-button:hover {
+.playlist-button:hover {
     background: linear-gradient(to right, transparent, #25292c);
+}
+
+.open-playlist:hover {
+    background: linear-gradient(to right, rgba(47, 51, 56, 0.3), transparent);
 }

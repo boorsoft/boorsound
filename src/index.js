@@ -5,6 +5,7 @@ const fs = require('fs')
 const mm = require('musicmetadata')
 const Store = require('./store')
 
+const header = document.querySelector('.header')
 const quitButton = document.querySelector('#quitButton')
 const minimizeButton = document.querySelector('#minimizeButton')
 const coverContainer = document.querySelector('.cover-container')
@@ -26,6 +27,10 @@ const seekbar = document.querySelector('.seekbar')
 const volumeButton = document.querySelector('#volumeButton')
 const volumeContainer = document.querySelector('.volume-container')
 const volumeSlider = document.querySelector('.volume-slider')
+
+const openPlaystlistButton = document.querySelector('#openPlaylistButton')
+const closePlaylistButton = document.querySelector("#closePlaylistButton")
+const playlistContainer = document.querySelector('.playlist-container')
 
 var dragging = false;
 var volumeOpen = false;
@@ -176,6 +181,23 @@ volumeButton.addEventListener('click', () => {
     }
 })
 
+// Playlist
+openPlaystlistButton.addEventListener('click', () => {
+    playlistContainer.style.opacity = '1'
+    playlistContainer.style.pointerEvents = 'all'
+    playlistContainer.style.width = '100%'
+    openPlaystlistButton.style.display = 'none'
+    header.style.backgroundColor = '#25292c'
+})
+
+closePlaylistButton.addEventListener('click', () => {
+    playlistContainer.style.pointerEvents = 'none'
+    playlistContainer.style.width = '0%'
+    playlistContainer.style.opacity = '0'
+    openPlaystlistButton.style.display = 'block'
+    header.style.backgroundColor = 'transparent'
+})
+
 volumeSlider.oninput = () => {
     audio.volume = volumeSlider.value;
 }
@@ -184,7 +206,7 @@ var win = remote.getCurrentWindow();
 
 ipcRenderer.on('second-instance', (e, file) => {
     console.log('File', file)
-    init(file) // Swipe files if second instance of app is opened
+    init(file) // Swap files if second instance of app is opened
 })
 
 minimizeButton.addEventListener('click', () => {
