@@ -1,3 +1,4 @@
+const { dialog } = require('electron')
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const remote = electron.remote
@@ -31,6 +32,7 @@ const volumeSlider = document.querySelector('.volume-slider')
 const openPlaystlistButton = document.querySelector('#openPlaylistButton')
 const closePlaylistButton = document.querySelector("#closePlaylistButton")
 const playlistContainer = document.querySelector('.playlist-container')
+const openFolderButton = document.querySelector('#openFolderButton')
 
 var dragging = false;
 var volumeOpen = false;
@@ -187,7 +189,7 @@ openPlaystlistButton.addEventListener('click', () => {
     playlistContainer.style.pointerEvents = 'all'
     playlistContainer.style.width = '100%'
     openPlaystlistButton.style.display = 'none'
-    header.style.backgroundColor = '#25292c'
+    header.style.backgroundColor = 'rgba(37, 41, 44, 0.9)'
 })
 
 closePlaylistButton.addEventListener('click', () => {
@@ -196,6 +198,19 @@ closePlaylistButton.addEventListener('click', () => {
     playlistContainer.style.opacity = '0'
     openPlaystlistButton.style.display = 'block'
     header.style.backgroundColor = 'transparent'
+})
+
+openFolderButton.addEventListener('click', () => {
+    let options = {
+        title: "Выбрать папку",
+        buttonLabel: "Открыть",
+        filters: [
+            {name: 'Audio', extensions: ['mp3', 'wav']}
+        ],
+        properties: ['openDirectory']
+    }
+
+    remote.dialog.showOpenDialog(remote.getCurrentWindow, options)
 })
 
 volumeSlider.oninput = () => {
