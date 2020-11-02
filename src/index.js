@@ -1,4 +1,3 @@
-const { dialog } = require('electron')
 const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const remote = electron.remote
@@ -200,17 +199,31 @@ closePlaylistButton.addEventListener('click', () => {
     header.style.backgroundColor = 'transparent'
 })
 
+// Open a folder on click
 openFolderButton.addEventListener('click', () => {
-    let options = {
-        title: "Выбрать папку",
-        buttonLabel: "Открыть",
-        filters: [
-            {name: 'Audio', extensions: ['mp3', 'wav']}
-        ],
-        properties: ['openDirectory']
-    }
+    remote.dialog.showOpenDialog({properties: ['openDirectory']}).then((data) => {
+        if (data.filePaths.length != 0) {
+            // Create folder element to append it to HTML (playlistContainer)
+            var folder = document.createElement('div')
+            folder.setAttribute('class', 'track-container folder')
+            var folderIconContainer = document.createElement('div')
+            folderIconContainer.setAttribute('class', 'folder-icon')
+            var folderIcon = document.createElement('i')
+            folderIcon.setAttribute('class', 'fa fa-folder-open')
+            var folderName = document.createElement('div')
+            folderName.setAttribute('id', 'folderName')
+            folderName.innerHTML = data.filePaths[0]
 
-    remote.dialog.showOpenDialog(remote.getCurrentWindow, options)
+            folderIconContainer.appendChild(folderIcon)
+
+            folder.appendChild(folderIconContainer)
+            folder.appendChild(folderName)
+
+            playlistContainer.appendChild(folder)
+
+            console.log(data.filePaths)
+        }  
+    })
 })
 
 volumeSlider.oninput = () => {

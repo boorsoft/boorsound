@@ -263,6 +263,12 @@ h1 {
     background-color: rgba(30, 33, 33, 0.9);
     top: 40px;
     transition: 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    overflow-y: scroll;
+    scrollbar-width: 0;
+}
+
+.playlist-container::-webkit-scrollbar {
+    display: none;
 }
 
 .playlist-header {
@@ -296,6 +302,13 @@ h1 {
 
 .folder-icon i {
     font-size: 23px;
+}
+
+#folderName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-lines: 1;
 }
 
 .title-info {
@@ -363,8 +376,8 @@ h1 {
     background: var(--text-color);
     color: #25292c;
     border-radius: 100%;
-    position: absolute;
-    bottom: 20px;
+    position: fixed;
+    bottom: 100px;
     margin: 0 165px;
     box-shadow: 3px 4px 8px rgba(20, 20, 20, 0.45);
 }
