@@ -60,7 +60,8 @@ function init(track = remote.process.argv[1]) {
         var stream = fs.createReadStream(file)
         // get mp3 data, such as track title, artist, cover image etc.
         mm(stream, (err, data) => {
-            if (err) throw err;
+            if (err) {
+            } 
             stream.close()
 
             // get the cover image buffer data if exists
@@ -72,13 +73,16 @@ function init(track = remote.process.argv[1]) {
                 coverContainer.style.backgroundImage = `url(${coverUrl})`
                 bg.style.backgroundImage = `url(${coverUrl})`
             } else {
+                bg.style.backgroundImage = 'none'
                 bg.style.backgroundColor = '#25292c'
                 coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
             }
-
+            
             // set the HTML elements' values to the values we read from an mp3 file
-            artist.innerHTML = data['artist']
-            trackTitle.innerHTML = data['title']
+            if (data['artist'].length != 0) artist.innerHTML = data['artist']
+            else artist.innerHTML = 'Неизвестен'
+            if (data['title'].length != 0) trackTitle.innerHTML = data['title']
+            else trackTitle.innerHTML = 'Без названия'
         })
     }
 }
