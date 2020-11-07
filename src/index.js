@@ -40,6 +40,8 @@ const audio = new Audio();
 
 const store = new Store()
 
+var folders = [];
+
 init();
 
 function init(track = remote.process.argv[1]) {
@@ -225,7 +227,22 @@ openFolderButton.addEventListener('click', () => {
 
             playlistContainer.appendChild(folder)
 
-            console.log(data.filePaths)
+            fs.readdir(data.filePaths[0], (err, files) => {
+                if (err) throw err;
+
+                let folder = {};
+
+                folder[data.filePaths.toString()] = []
+
+                files.forEach((file) => {
+                    folder[data.filePaths].push(file);
+                })
+
+                folders.push(folder)
+
+                console.log(folder)
+                console.log(folders)
+            })
         }  
     })
 })
