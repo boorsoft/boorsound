@@ -31,6 +31,7 @@ const volumeSlider = document.querySelector('.volume-slider')
 const openPlaystlistButton = document.querySelector('#openPlaylistButton')
 const closePlaylistButton = document.querySelector("#closePlaylistButton")
 const playlistContainer = document.querySelector('.playlist-container')
+const playlistInner = document.querySelector('#playlistInner')
 const openFolderButton = document.querySelector('#openFolderButton')
 
 var dragging = false;
@@ -40,7 +41,7 @@ const audio = new Audio();
 
 const store = new Store()
 
-var folders = [];
+var folders = []; // Remember the folders added by user
 
 init();
 
@@ -82,9 +83,9 @@ function init(track = remote.process.argv[1]) {
             
             // set the HTML elements' values to the values we read from an mp3 file
             if (data['artist'].length != 0) artist.innerHTML = data['artist']
-            else artist.innerHTML = 'Неизвестен'
+            else artist.innerHTML = 'Unknown'
             if (data['title'].length != 0) trackTitle.innerHTML = data['title']
-            else trackTitle.innerHTML = 'Без названия'
+            else trackTitle.innerHTML = 'No Title'
         })
     }
 }
@@ -134,10 +135,41 @@ function duration(seconds) {
     trackDuration.textContent = min + ":" + sec;
 }
 
+function getFolderIndex() {
+    for (let i = 0; i < playlistInner.children.length; i++) {
+        playlistInner.children[i].onclick = () => {
+            console.log(folders[i])
+            playlistInner.innerHTML = ''
+            
+            folders[i].forEach((el) => {
+                let track = document.createElement('div')
+                track.setAttribute('class', 'track-container')
+
+                let titleInfo = document.createElement('div')
+                titleInfo.setAttribute('class', 'title-info')
+
+                let title = document.createElement('div')
+                title.setAttribute('class', 'title')
+                title.innerHTML = el;
+
+                let artist = document.createElement('div')
+                artist.setAttribute('class', 'artist')
+
+                titleInfo.appendChild(title)
+                titleInfo.appendChild(artist)
+                track.appendChild(titleInfo)
+
+                playlistInner.appendChild(track)
+            })
+        }
+    }
+}
+
 // Event listeners
 playOrPauseButton.addEventListener('click', playOrPause)
 repeatButton.addEventListener('click', repeatAudio)
 
+// Play or pause on pressing Space key
 document.addEventListener('keydown', (e) => {
     if (e.key === ' ') playOrPause()
 })
@@ -225,28 +257,35 @@ openFolderButton.addEventListener('click', () => {
             folder.appendChild(folderIconContainer)
             folder.appendChild(folderName)
 
-            playlistContainer.appendChild(folder)
+            playlistInner.appendChild(folder)
 
+            // Read the chosen directory
             fs.readdir(data.filePaths[0], (err, files) => {
                 if (err) throw err;
 
-                let folder = {};
+                // Folder object to store folder path and files in it
+                let folder = [];
 
                 folder[data.filePaths.toString()] = []
-
+                
+                // loop through each file in the folder
                 files.forEach((file) => {
-                    folder[data.filePaths].push(file);
+                    folder.push(file); // key - folder path, value - list of mp3 files
                 })
 
-                folders.push(folder)
+                folders.push(folder) // add to the global folders list
 
                 console.log(folder)
                 console.log(folders)
             })
+
+            getFolderIndex();
+
         }  
     })
 })
 
+// Change the volume
 volumeSlider.oninput = () => {
     audio.volume = volumeSlider.value;
 }

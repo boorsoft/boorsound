@@ -267,6 +267,13 @@ h1 {
     scrollbar-width: 0;
 }
 
+.playlist-inner {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+}
+
 .playlist-container::-webkit-scrollbar {
     display: none;
 }
@@ -343,7 +350,7 @@ h1 {
     height: 70vh;
     width: 15px;
     padding: 15px;
-    position: absolute;
+    position: fixed;
     right: 0;
     font-size: 25px;
     z-index: 11;
