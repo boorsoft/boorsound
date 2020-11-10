@@ -283,6 +283,24 @@ h1 {
     height: 35px;
     padding: 10px 5px;
     text-align: center;
+    display: flex;
+}
+
+.playlist-header h1 {
+    margin: auto;
+}
+
+.back-button {
+    padding: 5px;
+    display: none;
+}
+
+.back-button i {
+    font-size: 18px;
+}
+
+.back-button i:hover {
+    color: #e3d6cc;
 }
 
 .track-container {

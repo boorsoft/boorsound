@@ -33,9 +33,10 @@ const closePlaylistButton = document.querySelector("#closePlaylistButton")
 const playlistContainer = document.querySelector('.playlist-container')
 const playlistInner = document.querySelector('#playlistInner')
 const openFolderButton = document.querySelector('#openFolderButton')
+const backButton = document.querySelector('#backButton')
 
 var dragging = false;
-var volumeOpen = false;
+var volumeOpen = false; // volume control panel opened
 
 const audio = new Audio();
 
@@ -161,8 +162,31 @@ function getFolderIndex() {
 
                 playlistInner.appendChild(track)
             })
+
+            backButton.style.display = 'block' // Enable the button to get back to the folder list
         }
     }
+}
+
+// A  function to create a folder element to append it to HTML (playlistContainer)
+function createFolderElement({data = null, f = null}) {    
+    var folder = document.createElement('div')
+    folder.setAttribute('class', 'track-container folder')
+    var folderIconContainer = document.createElement('div')
+    folderIconContainer.setAttribute('class', 'folder-icon')
+    var folderIcon = document.createElement('i')
+    folderIcon.setAttribute('class', 'fa fa-folder-open')
+    var folderName = document.createElement('div')
+    folderName.setAttribute('id', 'folderName')
+    if (data) folderName.innerHTML = data.filePaths[0]
+    else folderName.innerHTML = f
+
+    folderIconContainer.appendChild(folderIcon)
+
+    folder.appendChild(folderIconContainer)
+    folder.appendChild(folderName)
+
+    playlistInner.appendChild(folder)
 }
 
 // Event listeners
@@ -241,23 +265,7 @@ closePlaylistButton.addEventListener('click', () => {
 openFolderButton.addEventListener('click', () => {
     remote.dialog.showOpenDialog({properties: ['openDirectory']}).then((data) => {
         if (data.filePaths.length != 0) {
-            // Create folder element to append it to HTML (playlistContainer)
-            var folder = document.createElement('div')
-            folder.setAttribute('class', 'track-container folder')
-            var folderIconContainer = document.createElement('div')
-            folderIconContainer.setAttribute('class', 'folder-icon')
-            var folderIcon = document.createElement('i')
-            folderIcon.setAttribute('class', 'fa fa-folder-open')
-            var folderName = document.createElement('div')
-            folderName.setAttribute('id', 'folderName')
-            folderName.innerHTML = data.filePaths[0]
-
-            folderIconContainer.appendChild(folderIcon)
-
-            folder.appendChild(folderIconContainer)
-            folder.appendChild(folderName)
-
-            playlistInner.appendChild(folder)
+            createFolderElement({data: data})
 
             // Read the chosen directory
             fs.readdir(data.filePaths[0], (err, files) => {
@@ -266,7 +274,7 @@ openFolderButton.addEventListener('click', () => {
                 // Folder object to store folder path and files in it
                 let folder = [];
 
-                folder[data.filePaths.toString()] = []
+                folder['folderName'] = data.filePaths.toString()
                 
                 // loop through each file in the folder
                 files.forEach((file) => {
@@ -283,6 +291,18 @@ openFolderButton.addEventListener('click', () => {
 
         }  
     })
+})
+
+// Erase track elements and create folder elements on click
+backButton.addEventListener('click', () => {
+    backButton.style.display = 'none'
+    playlistInner.innerHTML = ''
+
+    folders.forEach((f) => {
+        createFolderElement({f: f['folderName']})
+    })
+
+    getFolderIndex()
 })
 
 // Change the volume
