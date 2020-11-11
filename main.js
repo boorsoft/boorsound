@@ -1,4 +1,4 @@
-const { app, BrowserWindow, remote } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const reload = require('electron-reload')
 const MemoryFileSystem = require("memory-fs");
 const mfs = new MemoryFileSystem();

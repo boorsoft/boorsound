@@ -2,6 +2,7 @@ const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const remote = electron.remote
 const fs = require('fs')
+const path = require('path')
 const mm = require('musicmetadata')
 const Store = require('./store')
 
@@ -57,15 +58,15 @@ function init(track = remote.process.argv[1]) {
     var file = track
     audio.src = file
     audio.autoplay = true;
+    audio.onloadedmetadata = () => {trackDuration.textContent = convertTime(Math.round(audio.duration))}
     playOrPauseButton.firstChild.className = 'fa fa-pause'
 
     if (file != '.') {
         // create stream to read an mp3 file
-        var stream = fs.createReadStream(file)
+        let stream = fs.createReadStream(file)
         // get mp3 data, such as track title, artist, cover image etc.
         mm(stream, (err, data) => {
-            if (err) {
-            } 
+
             stream.close()
 
             // get the cover image buffer data if exists
@@ -122,27 +123,17 @@ function convertTime(seconds) {
 
     min = (min < 10) ? "0" + min : min;
     sec = (sec < 10) ? "0" + sec : sec;
-    trackCurrentTime.textContent = min + ":" + sec;
-    duration(Math.round(audio.duration));
+    return min + ":" + sec
 }
 
-// Create 2 digit format instead of 1
-function duration(seconds) {
-    var min = Math.floor(seconds / 60);
-    var sec = seconds % 60;
-
-    min = (min < 10) ? "0" + min : min;
-    sec = (sec < 10) ? "0" + sec : sec;
-    trackDuration.textContent = min + ":" + sec;
-}
-
-function getFolderIndex() {
+function updateFolder() {
     for (let i = 0; i < playlistInner.children.length; i++) {
         playlistInner.children[i].onclick = () => {
             console.log(folders[i])
             playlistInner.innerHTML = ''
             
             folders[i].forEach((el) => {
+
                 let track = document.createElement('div')
                 track.setAttribute('class', 'track-container')
 
@@ -151,14 +142,37 @@ function getFolderIndex() {
 
                 let title = document.createElement('div')
                 title.setAttribute('class', 'title')
-                title.innerHTML = el;
 
                 let artist = document.createElement('div')
                 artist.setAttribute('class', 'artist')
 
+                let durationInfo = document.createElement('div')
+                durationInfo.setAttribute('class', 'duration-info-playlist')
+
+                let stream = fs.createReadStream(folders[i]['folderName'] + '\\' + el) // read files in folder
+
+                // set music metadata
+                mm(stream, (err, data) => {
+                    if (err) throw err;
+
+                    if (data['artist'].length != 0) artist.innerHTML = data['artist']
+                    else artist.innerHTML = 'Unknown'
+
+                    if (data['title'].length != 0) title.innerHTML = data['title']
+                    else title.innerHTML = 'No Title'
+
+                    let song = new Audio()
+                    song.src = path.join(folders[i]['folderName'] + '\\' + el)
+                    song.onloadedmetadata = () => {
+                        durationInfo.innerHTML = convertTime(Math.round(song.duration));
+                    }
+
+                })
+
                 titleInfo.appendChild(title)
                 titleInfo.appendChild(artist)
                 track.appendChild(titleInfo)
+                track.appendChild(durationInfo)
 
                 playlistInner.appendChild(track)
             })
@@ -201,9 +215,9 @@ document.addEventListener('keydown', (e) => {
 // Update fillbar 
 audio.addEventListener('timeupdate', () => {
     var position = audio.currentTime / audio.duration;
-    convertTime(Math.round(audio.currentTime))
+    trackCurrentTime.textContent = convertTime(Math.round(audio.currentTime))
 
-    fillbar.style.width = position * 100 + '%'
+    fillbar.style.width = position * 100 + '%'  
 
     if (audio.ended) {
         if (repeat) {
@@ -283,11 +297,9 @@ openFolderButton.addEventListener('click', () => {
 
                 folders.push(folder) // add to the global folders list
 
-                console.log(folder)
-                console.log(folders)
             })
 
-            getFolderIndex();
+            updateFolder();
 
         }  
     })
@@ -302,7 +314,7 @@ backButton.addEventListener('click', () => {
         createFolderElement({f: f['folderName']})
     })
 
-    getFolderIndex()
+    updateFolder()
 })
 
 // Change the volume
