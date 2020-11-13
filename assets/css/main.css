@@ -255,7 +255,7 @@ h1 {
 
 .playlist-container {
     width: 0;
-    height: 77vh;
+    height: 76.8vh;
     position: absolute;
     opacity: 0;
     pointer-events: none;
@@ -284,6 +284,9 @@ h1 {
     padding: 10px 5px;
     text-align: center;
     display: flex;
+    position: fixed;
+    z-index: 1;
+    background-color: #25292c;
 }
 
 .playlist-header h1 {
@@ -312,6 +315,10 @@ h1 {
     align-items: center;
     transition: background-color 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
     cursor: pointer;
+}
+
+.track-container:first-child {
+    margin-top: 35px;
 }
 
 .track-container:hover {
@@ -371,7 +378,7 @@ h1 {
 }
 
 .playlist-button {
-    height: 70vh;
+    height: 76.8vh;
     width: 15px;
     padding: 15px;
     position: fixed;
@@ -384,7 +391,7 @@ h1 {
 .open-playlist {
     left: 0;
     top: 0;
-    height: 77vh;
+    height: 85vh;
     margin-bottom: 80px;
     padding: 50px 15px;
 }

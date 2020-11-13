@@ -44,6 +44,8 @@ const audio = new Audio();
 const store = new Store()
 
 var folders = []; // Remember the folders added by user
+var currentFolder;
+var currentTrack;
 
 init();
 
@@ -92,6 +94,10 @@ function init(track = remote.process.argv[1]) {
     }
 }
 
+function getFolderAbsPath(i) {
+    return path.join(folders[i]['folderName']) + '\\'
+}
+
 // Audio controls
 function playOrPause() {
     if (audio.paused) {
@@ -101,6 +107,19 @@ function playOrPause() {
         playOrPauseButton.firstChild.className = 'fa fa-play';
         audio.pause();
     }
+}
+
+function nextAudio() {
+    if (currentTrack < folders[currentFolder].length - 1) init(getFolderAbsPath(currentFolder) + folders[currentFolder][++currentTrack])
+    else {
+        currentTrack = 0
+        init(getFolderAbsPath(currentFolder) + folders[currentFolder][currentTrack])
+    }
+}
+
+function prevAudio() {
+    if (currentTrack != 0) init(path.join(getFolderAbsPath(currentFolder) + folders[currentFolder][--currentTrack]))
+    else init(path.join(getFolderAbsPath(currentFolder) + folders[currentFolder][0]))
 }
 
 function repeatAudio() {
@@ -175,6 +194,14 @@ function updateFolder() {
                 track.appendChild(durationInfo)
 
                 playlistInner.appendChild(track)
+
+                // Swap files on track click
+                track.addEventListener('click', () => {
+                    init(getFolderAbsPath(i) + el)
+                    currentFolder = i; // remember what folder is track from
+                    currentTrack = folders[i].indexOf(el) // remember the track index
+                })
+                
             })
 
             backButton.style.display = 'block' // Enable the button to get back to the folder list
@@ -205,6 +232,8 @@ function createFolderElement({data = null, f = null}) {
 
 // Event listeners
 playOrPauseButton.addEventListener('click', playOrPause)
+nextButton.addEventListener('click', nextAudio)
+prevButton.addEventListener('click', prevAudio)
 repeatButton.addEventListener('click', repeatAudio)
 
 // Play or pause on pressing Space key
@@ -224,7 +253,8 @@ audio.addEventListener('timeupdate', () => {
             audio.play()
         } else {
             playOrPauseButton.firstChild.className = 'fa fa-play'
-            audio.pause()
+            
+            nextAudio()
         }
     } 
 })
