@@ -81,7 +81,7 @@ function init(track = remote.process.argv[1]) {
                 bg.style.backgroundImage = `url(${coverUrl})`
             } else {
                 bg.style.backgroundImage = 'none'
-                bg.style.backgroundColor = '#25292c'
+                bg.style.backgroundColor = 'rgba(37, 41, 44, 1)' // set bg color
                 coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
             }
             
@@ -115,11 +115,13 @@ function nextAudio() {
         currentTrack = 0
         init(getFolderAbsPath(currentFolder) + folders[currentFolder][currentTrack])
     }
+    getCurrentTrack()
 }
 
 function prevAudio() {
     if (currentTrack != 0) init(path.join(getFolderAbsPath(currentFolder) + folders[currentFolder][--currentTrack]))
     else init(path.join(getFolderAbsPath(currentFolder) + folders[currentFolder][0]))
+    getCurrentTrack()
 }
 
 function repeatAudio() {
@@ -145,6 +147,15 @@ function convertTime(seconds) {
     return min + ":" + sec
 }
 
+// Get current track and style it
+function getCurrentTrack() {
+    playlistInner.children[currentTrack].style.backgroundColor = 'rgba(37, 41, 44, 0.85)' // set the background of the current track
+    // loop through each track
+    for(let i = 0; i < playlistInner.children.length; i++) {
+        if (i != currentTrack) playlistInner.children[i].style.backgroundColor = '' // unset the background except the current track
+    }
+}
+
 function updateFolder() {
     for (let i = 0; i < playlistInner.children.length; i++) {
         playlistInner.children[i].onclick = () => {
@@ -168,7 +179,7 @@ function updateFolder() {
                 let durationInfo = document.createElement('div')
                 durationInfo.setAttribute('class', 'duration-info-playlist')
 
-                let stream = fs.createReadStream(folders[i]['folderName'] + '\\' + el) // read files in folder
+                let stream = fs.createReadStream(getFolderAbsPath(i) + el) // read files in folder
 
                 // set music metadata
                 mm(stream, (err, data) => {
@@ -181,7 +192,7 @@ function updateFolder() {
                     else title.innerHTML = 'No Title'
 
                     let song = new Audio()
-                    song.src = path.join(folders[i]['folderName'] + '\\' + el)
+                    song.src = getFolderAbsPath(i) + el
                     song.onloadedmetadata = () => {
                         durationInfo.innerHTML = convertTime(Math.round(song.duration));
                     }
@@ -200,6 +211,7 @@ function updateFolder() {
                     init(getFolderAbsPath(i) + el)
                     currentFolder = i; // remember what folder is track from
                     currentTrack = folders[i].indexOf(el) // remember the track index
+                    getCurrentTrack()
                 })
                 
             })
