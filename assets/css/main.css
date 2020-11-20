@@ -9,8 +9,9 @@
 }
 
 :root {
-    --primary-color: #1e2121;
-    --text-color: #ffeee2;
+    --primary-color: #141413;
+    --secondary-color: #1b1b1b;
+    --text-color: #f9f9f9;
 }
 
 * {
@@ -20,7 +21,7 @@
 }
 
 body {
-    background-color: #25292c;
+    background-color: var(--primary-color);
     font-family: "Roboto", sans-serif;
     overflow: hidden;
     color: var(--text-color);
@@ -51,7 +52,6 @@ h1 {
     -webkit-app-region: drag;
     display: flex;
     justify-content: space-between;
-    background: rgba(37, 41, 44, 0);
     transition: 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
@@ -82,7 +82,7 @@ h1 {
 }
 
 .app-button:hover {
-    color: #25292c;
+    color: var(--secondary-color);
     background-color: #ffeee2;
 }
 
@@ -107,7 +107,7 @@ h1 {
     width: 270px;
     height: 275px;
     border-radius: 20px;
-    background-color: #2f3338;
+    background-color: #1e1e1e;
     background-size: 270px 275px;
     box-shadow: 2px 3px 10px rgba(20, 20, 20, 0.3);
     transition: 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -286,7 +286,7 @@ h1 {
     display: flex;
     position: fixed;
     z-index: 1;
-    background-color: rgba(37, 41, 44, 0.9);
+    background-color: rgba(27,27,27,1);
 }
 
 .playlist-header h1 {
@@ -323,7 +323,7 @@ h1 {
 }
 
 .track-container:hover {
-    background-color: rgba(37, 41, 44, 0.85);
+    background-color: rgba(27, 27, 27, 0.85);
 }
 
 .folder  {
@@ -402,7 +402,7 @@ h1 {
 }
 
 .playlist-button:hover {
-    background: linear-gradient(to right, transparent, #25292c);
+    background: linear-gradient(to right, transparent, var(--secondary-color));
 }
 
 .open-playlist:hover {
@@ -413,7 +413,7 @@ h1 {
     width: 40px;
     height: 40px;
     background: var(--text-color);
-    color: #25292c;
+    color: var(--secondary-color);
     border-radius: 100%;
     position: fixed;
     bottom: 100px;

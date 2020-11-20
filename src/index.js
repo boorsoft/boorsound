@@ -32,6 +32,7 @@ const volumeSlider = document.querySelector('.volume-slider')
 const openPlaystlistButton = document.querySelector('#openPlaylistButton')
 const closePlaylistButton = document.querySelector("#closePlaylistButton")
 const playlistContainer = document.querySelector('.playlist-container')
+const playlistHeader = document.querySelector('.playlist-header')
 const playlistInner = document.querySelector('#playlistInner')
 const openFolderButton = document.querySelector('#openFolderButton')
 const backButton = document.querySelector('#backButton')
@@ -78,11 +79,13 @@ function init(track = remote.process.argv[1]) {
                 var urlCreator = window.URL || window.webkitURL; // initialize an url creator
                 var coverUrl = urlCreator.createObjectURL( blob ); // create an url to a BLOB object
                 coverContainer.style.backgroundImage = `url(${coverUrl})`
+                playlistHeader.style.backgroundColor = 'rgba(27,27,27,0.35)'
                 bg.style.backgroundImage = `url(${coverUrl})`
             } else {
                 bg.style.backgroundImage = 'none'
-                bg.style.backgroundColor = 'rgba(37, 41, 44, 1)' // set bg color
-                coverContainer.style.backgroundImage = 'url("../assets/icons/boorsound-logo-no-circle.png")' // else set boorsound logo as the cover image
+                bg.style.backgroundColor = '#1b1b1b' // set bg color
+                playlistHeader.style.backgroundColor = 'rgba(27,27,27,1)' // set the playlist header color to transparent
+                coverContainer.style.backgroundImage = 'url("../assets/icons/Boorsound-Logo-No-Wrapper.png")' // else set boorsound logo as the cover image
             }
             
             // set the HTML elements' values to the values we read from an mp3 file
@@ -149,7 +152,7 @@ function convertTime(seconds) {
 
 // Get current track and style it
 function getCurrentTrack() {
-    playlistInner.children[currentTrack].style.backgroundColor = 'rgba(37, 41, 44, 0.85)' // set the background of the current track
+    playlistInner.children[currentTrack].style.backgroundColor = 'rgba(27, 27, 27, 0.85)' // set the background of the current track
     // loop through each track
     for(let i = 0; i < playlistInner.children.length; i++) {
         if (i != currentTrack) playlistInner.children[i].style.backgroundColor = '' // unset the background except the current track
@@ -306,7 +309,7 @@ openPlaystlistButton.addEventListener('click', () => {
     playlistContainer.style.pointerEvents = 'all'
     playlistContainer.style.width = '100%'
     openPlaystlistButton.style.display = 'none'
-    header.style.backgroundColor = 'rgba(37, 41, 44, 0.9)'
+    header.style.backgroundColor = 'rgba(27, 27, 27, 0.9)'
 })
 
 closePlaylistButton.addEventListener('click', () => {
