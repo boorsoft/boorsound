@@ -48,19 +48,18 @@ var currentFolder;
 var currentTrack;
 var userdata = {'folders': [], 'repeat': false}; // User data to store while running the program
 
-init();
+init(); // Initialize audio. It is executed every time when you need to switch audio
+
+// Load the folders to UI
+userdata['folders'].forEach((f) => {
+    createFolderElement({f: f['folderName']})
+})
+
+openFolder() // get folder indexes and make them openable
 
 function init(track = remote.process.argv[1]) {
     userdata['repeat'] = Boolean(store.get('repeat')) // read from file
     userdata['folders'] = store.get('folders')
-
-    // Load the folderss to UI
-    userdata['folders'].forEach((f) => {
-        createFolderElement({f: f['folderName']})
-    })
-
-    // Function is needed to know which folder is being clicked by index and to create track elements on click
-    openFolder()
 
     // Change repeat button styling
     if (userdata['repeat']) repeatButton.style.backgroundColor = repeatButtonColor;
@@ -126,17 +125,17 @@ function playOrPause() {
 }
 
 function nextAudio() {
-    if (currentTrack < userdata['folders'][currentFolder].length - 1) init(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][++currentTrack])
+    if (currentTrack < userdata['folders'][currentFolder]['tracks'].length) init(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder]['tracks'][++currentTrack])
     else {
         currentTrack = 0
-        init(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][currentTrack])
+        init(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder]['tracks'][currentTrack])
     }
     getCurrentTrack()
 }
 
 function prevAudio() {
-    if (currentTrack != 0) init(path.join(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][--currentTrack]))
-    else init(path.join(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][0]))
+    if (currentTrack != 0) init(path.join(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder]['tracks'][--currentTrack]))
+    else init(path.join(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder]['tracks'][0]))
     getCurrentTrack()
 }
 
@@ -178,7 +177,7 @@ function openFolder() {
             console.log(userdata['folders'][i])
             playlistInner.innerHTML = '' // CLean up the playlistInner first. It's needed to make sure it's empty when opening the folder next time
             
-            userdata['folders'][i].forEach((el) => {
+            userdata['folders'][i]['tracks'].forEach((el) => {
                 // Create html elements for each track from a folder
                 let track = document.createElement('div')
                 track.setAttribute('class', 'track-container')
@@ -226,7 +225,7 @@ function openFolder() {
                 track.addEventListener('click', () => {
                     init(getFolderAbsPath(i) + el)
                     currentFolder = i; // remember what folder is track from
-                    currentTrack = userdata['folders'][i].indexOf(el) // remember the track index
+                    currentTrack = userdata['folders'][i]['tracks'].indexOf(el) // remember the track index
                     getCurrentTrack()
                 })
                 
@@ -345,13 +344,11 @@ openFolderButton.addEventListener('click', () => {
                 if (err) throw err;
 
                 // Folder array to store folder path and files in it
-                let folder = [];
-
-                folder['folderName'] = data.filePaths.toString() 
+                let folder = {folderName: data.filePaths.toString(), tracks: []}
                 
                 // loop through each file in the folder
                 files.forEach((file) => {
-                    folder.push(file); // key - folder path, value - list of mp3 files
+                    folder['tracks'].push(file); // key - folder path, value - list of mp3 files
                 })
 
                 userdata['folders'].push(folder) // add to the global folders 
