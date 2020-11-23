@@ -176,8 +176,15 @@ function openFolder() {
         playlistInner.children[i].onclick = () => {
             console.log(userdata['folders'][i])
             playlistInner.innerHTML = '' // CLean up the playlistInner first. It's needed to make sure it's empty when opening the folder next time
+
+            let tracks = []
+
+            userdata['folders'][i]['tracks'].forEach((el) => tracks.push(el))
+            // userdata['folders'][i]['innerFolders'].forEach((el) => tracks.push(el))
+
+            console.log(tracks)
             
-            userdata['folders'][i]['tracks'].forEach((el) => {
+            tracks.forEach((el) => {
                 // Create html elements for each track from a folder
                 let track = document.createElement('div')
                 track.setAttribute('class', 'track-container')
@@ -225,7 +232,7 @@ function openFolder() {
                 track.addEventListener('click', () => {
                     init(getFolderAbsPath(i) + el)
                     currentFolder = i; // remember what folder is track from
-                    currentTrack = userdata['folders'][i]['tracks'].indexOf(el) // remember the track index
+                    currentTrack = tracks.indexOf(el) // remember the track index
                     getCurrentTrack()
                 })
                 
@@ -333,36 +340,50 @@ closePlaylistButton.addEventListener('click', () => {
     header.style.backgroundColor = 'transparent'
 })
 
-function readDirectory(filePath, innerDir = false) {
-    // Read the chosen directory
-    fs.readdir(filePath, (err, files) => {
-        if (err) throw err;
+function readDirectory(filePath) {
+    // Folder array to store folder path and files in it
+    let folder = {folderName: filePath, tracks: [], innerFolders: []}
 
-        // Folder array to store folder path and files in it
-        let folder = {folderName: filePath, tracks: []}
-        
-        // loop through each file in the folder
-        files.forEach((file) => {
-            fs.stat(filePath + '/' + file, (err, stats) => {
-                if (stats.isDirectory()) {
-                    readDirectory(filePath + '/' + file, true)
-                    console.log(stats)
+    readDir(filePath)
+
+    function readDir(filePath, innerDir = false) {
+        // Read the chosen directory
+        fs.readdir(filePath, (err, files) => {
+            if (err) throw err;
+
+            let innerFolder = {folderName: filePath, tracks: []} // object for inner folders
+
+            // loop through each file in the folder
+            files.forEach((file) => {
+                fs.stat(filePath + '\\' + file, (err, stats) => {
+                    // If the file is directory, read it 
+                    if (stats.isDirectory()) {
+                        readDir(filePath + '\\' + file, true)
+                        console.log(stats)
+                    }
+                })
+                
+                // Add to tracks only mp3 files
+                if (path.extname(file) === '.mp3') {
+                    console.log('FILE: ', file)
+
+                    if (innerDir) {
+                        innerFolder['folderName'] = filePath
+                        innerFolder['tracks'].push(file)
+                    } else {
+                        folder['tracks'].push(file)
+                    }
                 }
+        
             })
 
-            if (path.extname(file) === '.mp3') {
-                console.log('FILE: ', file)
-                folder['tracks'].push(file); // key - folder path, value - list of mp3 files
-            }
-    
-        })
-
-        if (!innerDir) {
-            userdata['folders'].push(folder) // add to the global folders 
+            if (!innerDir) userdata['folders'].push(folder) // add to the global folders 
+            else folder['innerFolders'].push(innerFolder) // add folder to inner folders
+            
             store.set(userdata) // Store the userdata in a JSON file
-        }
-        
-    })
+        })
+    }
+    
 }
 
 // Open a folder on click
