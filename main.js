@@ -18,7 +18,7 @@ function createWindow () {
     resizable: false,
     minimizable: true,
     webPreferences: {
-      // devTools: false,
+      devTools: false,
       nodeIntegration: true,
       enableRemoteModule: true
     }

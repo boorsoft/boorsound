@@ -1,8 +1,8 @@
 {
   "name": "boorsound",
   "productName": "Boorsound",
-  "version": "1.0.0",
-  "description": "An audio player for desktop",
+  "version": "1.0.0-beta",
+  "description": "A simple local desktop audio player",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
