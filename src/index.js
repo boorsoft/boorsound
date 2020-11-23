@@ -37,33 +37,43 @@ const playlistInner = document.querySelector('#playlistInner')
 const openFolderButton = document.querySelector('#openFolderButton')
 const backButton = document.querySelector('#backButton')
 
-var dragging = false;
-var volumeOpen = false; // volume control panel opened
+var dragging = false; // dragging the seekbar
+var volumeOpen = false; // volume control panel opened;
 
 const audio = new Audio();
 
 const store = new Store()
 
-var folders = []; // Remember the folders added by user
 var currentFolder;
 var currentTrack;
+var userdata = {'folders': [], 'repeat': false}; // User data to store while running the program
 
 init();
 
 function init(track = remote.process.argv[1]) {
-    repeat = Boolean(store.get('repeat')) // read from file
+    userdata['repeat'] = Boolean(store.get('repeat')) // read from file
+    userdata['folders'] = store.get('folders')
+
+    // Load the folderss to UI
+    userdata['folders'].forEach((f) => {
+        createFolderElement({f: f['folderName']})
+    })
+
+    // Function is needed to know which folder is being clicked by index and to create track elements on click
+    openFolder()
 
     // Change repeat button styling
-    if (repeat) repeatButton.style.backgroundColor = repeatButtonColor;
+    if (userdata['repeat']) repeatButton.style.backgroundColor = repeatButtonColor;
     else repeatButton.style.backgroundColor = ''
     
     // set the audio file
     var file = track
     audio.src = file
     audio.autoplay = true;
-    audio.onloadedmetadata = () => {trackDuration.textContent = convertTime(Math.round(audio.duration))}
-    playOrPauseButton.firstChild.className = 'fa fa-pause'
+    audio.onloadedmetadata = () => {trackDuration.textContent = convertTime(Math.round(audio.duration))} // get the audio duration and display it
+    playOrPauseButton.firstChild.className = 'fa fa-pause' // set the icon to pause by default (cuz it's autoplay)
 
+    // if there's no file opened as an argument of the app
     if (file != '.') {
         // create stream to read an mp3 file
         let stream = fs.createReadStream(file)
@@ -94,11 +104,14 @@ function init(track = remote.process.argv[1]) {
             if (data['title'].length != 0) trackTitle.innerHTML = data['title']
             else trackTitle.innerHTML = 'No Title'
         })
+    } else {
+        coverContainer.style.backgroundImage = 'url("../assets/icons/Boorsound-Logo-No-Wrapper.png")'
     }
 }
 
+// Get folder absolute path. It's just not to type the same long thing again and again
 function getFolderAbsPath(i) {
-    return path.join(folders[i]['folderName']) + '\\'
+    return path.join(userdata['folders'][i]['folderName']) + '\\'
 }
 
 // Audio controls
@@ -113,31 +126,30 @@ function playOrPause() {
 }
 
 function nextAudio() {
-    if (currentTrack < folders[currentFolder].length - 1) init(getFolderAbsPath(currentFolder) + folders[currentFolder][++currentTrack])
+    if (currentTrack < userdata['folders'][currentFolder].length - 1) init(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][++currentTrack])
     else {
         currentTrack = 0
-        init(getFolderAbsPath(currentFolder) + folders[currentFolder][currentTrack])
+        init(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][currentTrack])
     }
     getCurrentTrack()
 }
 
 function prevAudio() {
-    if (currentTrack != 0) init(path.join(getFolderAbsPath(currentFolder) + folders[currentFolder][--currentTrack]))
-    else init(path.join(getFolderAbsPath(currentFolder) + folders[currentFolder][0]))
+    if (currentTrack != 0) init(path.join(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][--currentTrack]))
+    else init(path.join(getFolderAbsPath(currentFolder) + userdata['folders'][currentFolder][0]))
     getCurrentTrack()
 }
 
 function repeatAudio() {
-    if (repeat) {
+    if (userdata['repeat']) {
         repeatButton.style.backgroundColor = ''
-        repeat = false;
+        userdata['repeat'] = false;
     } else {
         repeatButton.style.backgroundColor = repeatButtonColor
-        repeat = true;
+        userdata['repeat'] = true;
     }
 
-    store.set('repeat', repeat) // Save value to the store
-
+    store.set(userdata) // store userdata in a JSON file
 }
 
 // Convert time to 2 digit format
@@ -150,7 +162,7 @@ function convertTime(seconds) {
     return min + ":" + sec
 }
 
-// Get current track and style it
+// Get current track and style it (I mean track container)
 function getCurrentTrack() {
     playlistInner.children[currentTrack].style.backgroundColor = 'rgba(27, 27, 27, 0.85)' // set the background of the current track
     // loop through each track
@@ -159,14 +171,15 @@ function getCurrentTrack() {
     }
 }
 
-function updateFolder() {
+// Function is needed to know which folder is being clicked by index and to create track elements on click
+function openFolder() {
     for (let i = 0; i < playlistInner.children.length; i++) {
         playlistInner.children[i].onclick = () => {
-            console.log(folders[i])
-            playlistInner.innerHTML = ''
+            console.log(userdata['folders'][i])
+            playlistInner.innerHTML = '' // CLean up the playlistInner first. It's needed to make sure it's empty when opening the folder next time
             
-            folders[i].forEach((el) => {
-
+            userdata['folders'][i].forEach((el) => {
+                // Create html elements for each track from a folder
                 let track = document.createElement('div')
                 track.setAttribute('class', 'track-container')
 
@@ -213,7 +226,7 @@ function updateFolder() {
                 track.addEventListener('click', () => {
                     init(getFolderAbsPath(i) + el)
                     currentFolder = i; // remember what folder is track from
-                    currentTrack = folders[i].indexOf(el) // remember the track index
+                    currentTrack = userdata['folders'][i].indexOf(el) // remember the track index
                     getCurrentTrack()
                 })
                 
@@ -264,7 +277,7 @@ audio.addEventListener('timeupdate', () => {
     fillbar.style.width = position * 100 + '%'  
 
     if (audio.ended) {
-        if (repeat) {
+        if (userdata['repeat']) {
             audio.play()
         } else {
             playOrPauseButton.firstChild.className = 'fa fa-play'
@@ -304,6 +317,7 @@ volumeButton.addEventListener('click', () => {
 })
 
 // Playlist
+// Open playlist container on click
 openPlaystlistButton.addEventListener('click', () => {
     playlistContainer.style.opacity = '1'
     playlistContainer.style.pointerEvents = 'all'
@@ -311,7 +325,7 @@ openPlaystlistButton.addEventListener('click', () => {
     openPlaystlistButton.style.display = 'none'
     header.style.backgroundColor = 'rgba(27, 27, 27, 0.9)'
 })
-
+// Close platlist container on click
 closePlaylistButton.addEventListener('click', () => {
     playlistContainer.style.pointerEvents = 'none'
     playlistContainer.style.width = '0%'
@@ -330,36 +344,38 @@ openFolderButton.addEventListener('click', () => {
             fs.readdir(data.filePaths[0], (err, files) => {
                 if (err) throw err;
 
-                // Folder object to store folder path and files in it
+                // Folder array to store folder path and files in it
                 let folder = [];
 
-                folder['folderName'] = data.filePaths.toString()
+                folder['folderName'] = data.filePaths.toString() 
                 
                 // loop through each file in the folder
                 files.forEach((file) => {
                     folder.push(file); // key - folder path, value - list of mp3 files
                 })
 
-                folders.push(folder) // add to the global folders list
-
+                userdata['folders'].push(folder) // add to the global folders 
+                store.set(userdata) // Store the userdata in a JSON file
             })
 
-            updateFolder();
-
+            // Function is needed to know which folder is being clicked by index and to create track elements on click
+            openFolder();
         }  
     })
 })
 
 // Erase track elements and create folder elements on click
 backButton.addEventListener('click', () => {
-    backButton.style.display = 'none'
-    playlistInner.innerHTML = ''
+    backButton.style.display = 'none' // Remove back button on click
+    playlistInner.innerHTML = '' // Clean up the playlist container. 
 
-    folders.forEach((f) => {
+    // Load the folderss back to UI
+    userdata['folders'].forEach((f) => {
         createFolderElement({f: f['folderName']})
     })
 
-    updateFolder()
+    // Function is needed to know which folder is being clicked by index and to create track elements on click
+    openFolder()
 })
 
 // Change the volume
