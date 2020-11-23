@@ -200,10 +200,10 @@ function openFolder() {
                 mm(stream, (err, data) => {
                     if (err) throw err;
 
-                    if (data['artist'].length != 0) artist.innerHTML = data['artist']
+                    if (data['artist'].length > 0 || data['artist'] != '') artist.innerHTML = data['artist']
                     else artist.innerHTML = 'Unknown'
 
-                    if (data['title'].length != 0) title.innerHTML = data['title']
+                    if (data['title'].length > 0 || data['title'] != '') title.innerHTML = data['title']
                     else title.innerHTML = 'No Title'
 
                     let song = new Audio()
@@ -333,27 +333,45 @@ closePlaylistButton.addEventListener('click', () => {
     header.style.backgroundColor = 'transparent'
 })
 
+function readDirectory(filePath, innerDir = false) {
+    // Read the chosen directory
+    fs.readdir(filePath, (err, files) => {
+        if (err) throw err;
+
+        // Folder array to store folder path and files in it
+        let folder = {folderName: filePath, tracks: []}
+        
+        // loop through each file in the folder
+        files.forEach((file) => {
+            fs.stat(filePath + '/' + file, (err, stats) => {
+                if (stats.isDirectory()) {
+                    readDirectory(filePath + '/' + file, true)
+                    console.log(stats)
+                }
+            })
+
+            if (path.extname(file) === '.mp3') {
+                console.log('FILE: ', file)
+                folder['tracks'].push(file); // key - folder path, value - list of mp3 files
+            }
+    
+        })
+
+        if (!innerDir) {
+            userdata['folders'].push(folder) // add to the global folders 
+            store.set(userdata) // Store the userdata in a JSON file
+        }
+        
+    })
+}
+
 // Open a folder on click
 openFolderButton.addEventListener('click', () => {
     remote.dialog.showOpenDialog({properties: ['openDirectory']}).then((data) => {
         if (data.filePaths.length != 0) {
             createFolderElement({data: data})
 
-            // Read the chosen directory
-            fs.readdir(data.filePaths[0], (err, files) => {
-                if (err) throw err;
-
-                // Folder array to store folder path and files in it
-                let folder = {folderName: data.filePaths.toString(), tracks: []}
-                
-                // loop through each file in the folder
-                files.forEach((file) => {
-                    folder['tracks'].push(file); // key - folder path, value - list of mp3 files
-                })
-
-                userdata['folders'].push(folder) // add to the global folders 
-                store.set(userdata) // Store the userdata in a JSON file
-            })
+            readDirectory(data.filePaths[0])
 
             // Function is needed to know which folder is being clicked by index and to create track elements on click
             openFolder();

@@ -10,7 +10,7 @@ let win = null;
 
 function createWindow () {
   win = new BrowserWindow({
-    icon: 'assets/icons/icon.png',
+    icon: 'assets/icons/icon.ico',
     width: 370,
     height: 530,
     frame: false,
@@ -18,6 +18,7 @@ function createWindow () {
     resizable: false,
     minimizable: true,
     webPreferences: {
+      // devTools: false,
       nodeIntegration: true,
       enableRemoteModule: true
     }
